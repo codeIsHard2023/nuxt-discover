@@ -23,6 +23,9 @@ const iconChange = computed(() => {
         </button>
       </div>
     </div>
-    <div class="p4">Playground</div>
+    <div p4 h-full>
+      Playground
+      <ThePlayground />
+    </div>
   </div>
 </template>
