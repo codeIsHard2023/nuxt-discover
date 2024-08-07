@@ -1,24 +1,28 @@
 <script setup lang="ts">
-const { x, y } = useMouse();
 const colorMode = useColorMode();
 
-function toggleColor() {
+const toggleColor = () => {
   colorMode.value = colorMode.value === "dark" ? "light" : "dark";
-}
+};
+
+const iconChange = computed(() => {
+  return colorMode.value === "dark"
+    ? "i-ic-baseline-mode-night"
+    : "i-ic-baseline-light-mode";
+});
 </script>
+
 <template>
-  <div class="text-red light:text-black">
-    Hello dear nuxt {{ x }}, {{ y }}
-    <h1 class="">Switch to another color mode</h1>
-    <button @click="toggleColor">
-      {{ colorMode.value }}
-    </button>
-    <h1>Color mode: {{ $colorMode.value }}</h1>
-    <select v-model="$colorMode.preference">
-      <option value="system">System</option>
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
-      <option value="sepia">Sepia</option>
-    </select>
+  <div class="grid grid-cols-[1fr_2fr] h-full">
+    <div class="border-r border-base p4">
+      Content
+      <div class="text-color" flex="~ gap2 items-center">
+        <span>Change color mode</span>
+        <button @click="toggleColor">
+          <div :class="iconChange" />
+        </button>
+      </div>
+    </div>
+    <div class="p4">Playground</div>
   </div>
 </template>
