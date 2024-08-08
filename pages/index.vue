@@ -13,19 +13,16 @@ const iconChange = computed(() => {
 </script>
 
 <template>
-  <div class="grid grid-cols-[1fr_2fr] h-full">
-    <div class="border-r border-base p4">
+  <div class="grid grid-cols-[1fr_2fr] h-full ">
+    <div border="~ r base p4">
       Content
-      <div class="text-color" flex="~ gap2 items-center">
+      <div text-color flex="~ gap2 items-center">
         <span>Change color mode</span>
         <button @click="toggleColor">
           <div :class="iconChange" />
         </button>
       </div>
     </div>
-    <div p4 h-full>
-      Playground
-      <ThePlayground />
-    </div>
+    <ThePlayground />
   </div>
 </template>
