@@ -31,8 +31,19 @@ export default defineNuxtConfig({
     "@unocss/nuxt",
     "@nuxt/content",
     "@nuxtjs/color-mode",
-    "@nuxt/ui"
+    "@nuxt/ui",
   ],
+  nitro: {
+    routeRules: {
+      "/**": {
+        cors: true,
+        headers: {
+          "Cross-Origin-Embedder-Policy": "require-corp",
+          "Cross-Origin-Opener-Policy": "same-origin",
+        },
+      },
+    },
+  },
   colorMode: {
     classSuffix: "",
   },
