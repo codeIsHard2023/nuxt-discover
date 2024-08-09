@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { content } from '#tailwind-config';
+
 const iframe = ref<HTMLIFrameElement>();
 const webContUrl = ref<string>();
 
@@ -7,15 +9,30 @@ type Status = 'init' | 'mount' | 'install' | 'start' | 'ready' | 'error'
 const status = ref<Status>('init')
 const error = ref<{ message: string }>() // maybe use shallowRef instead of ref ? 
 
-// const stream = new WritableStream()
 const stream = ref<ReadableStream>()
 
 async function startDevServer() {
+    const rawFiles = import.meta.glob([
+        '../templates/basic/*.*',
+        '!**/node_modules/**',
+    ], {
+        as: 'raw',
+        eager: true,
+    })
+    const files = Object.fromEntries(
+        Object.entries(rawFiles).map(([path, content]) => {
+            return [path.replace('../templates/basic/', ''), {
+                file: {
+                    contents: content,
+                },
+            }]
+        }),
+    )
+
     const webContainer = await useWebContainer();
 
     webContainer.on("server-ready", (port, url) => {
         status.value = 'ready'
-        // iframe.value!.src = url;
         webContUrl.value = url;
     });
 
@@ -25,25 +42,7 @@ async function startDevServer() {
     })
 
     status.value = 'mount'
-    await webContainer.mount({
-        "package.json": {
-            file: {
-                contents: JSON.stringify(
-                    {
-                        private: true,
-                        scripts: {
-                            dev: "nuxt dev",
-                        },
-                        dependencies: {
-                            nuxt: "latest",
-                        },
-                    },
-                    null,
-                    2
-                ),
-            },
-        },
-    });
+    await webContainer.mount(files);
 
     status.value = 'install'
 
@@ -72,12 +71,12 @@ onMounted(startDevServer);
 </script>
 
 <template>
-    <div h-full w-full grid="~ rows-[2fr_1fr]" of-hidden>
+    <div h-full w-full grid="~ rows-[2fr_2fr]" of-hidden>
         <iframe ref="iframe" w-full h-full v-show="status === 'ready'" />
         <div v-if="status !== 'ready'" w-full h-full texte-lg flex="~ items-center justify-center gap4">
             Status : {{ status }}ing...
             <div i-svg-spinners-bars-rotate-fade />
         </div>
-        <TerminalOutput :stream="stream" />
+        <TerminalOutput :stream="stream" h-full />
     </div>
 </template>
